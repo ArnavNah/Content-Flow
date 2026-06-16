@@ -28,7 +28,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 border-r border-border/40 bg-background flex flex-col h-screen sticky top-0">
+    <aside className="hidden md:flex w-64 border-r border-border/40 bg-background flex-col h-screen sticky top-0">
       <div className="h-16 flex items-center px-6 border-b border-border/40">
         <Link href="/" className="flex items-center gap-2">
           <div className="bg-primary/10 p-1.5 rounded-xl border border-primary/20">

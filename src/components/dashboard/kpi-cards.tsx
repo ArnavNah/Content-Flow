@@ -1,60 +1,134 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight, Eye, MousePointerClick, FileText, Share2 } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, FileText, Users, BarChart3, Edit3 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const kpis = [
   {
-    title: "Total Posts Generated",
-    value: "1,248",
-    change: "+12.5%",
+    title: "Content Assets",
+    value: "2,483",
+    change: "+12%",
     trend: "up",
-    icon: FileText
+    description: "Assets created this month",
+    icon: FileText,
+    color: "emerald",
+    sparkline: [20, 24, 22, 28, 30, 26, 32]
   },
   {
     title: "Total Reach",
-    value: "48.2k",
-    change: "+24.1%",
+    value: "184K",
+    change: "+18%",
     trend: "up",
-    icon: Eye
+    description: "Audience reached across channels",
+    icon: Users,
+    color: "blue",
+    sparkline: [15, 18, 17, 21, 24, 22, 28]
   },
   {
-    title: "Avg. Engagement",
-    value: "4.8%",
-    change: "-1.2%",
-    trend: "down",
-    icon: MousePointerClick
+    title: "Engagement Rate",
+    value: "8.4%",
+    change: "+1.2%",
+    trend: "up",
+    description: "Average engagement across content",
+    icon: BarChart3,
+    color: "indigo",
+    sparkline: [6.5, 7.0, 7.2, 7.8, 8.0, 8.2, 8.4]
   },
   {
-    title: "Shares",
-    value: "842",
-    change: "+8.2%",
-    trend: "up",
-    icon: Share2
+    title: "Saved Drafts",
+    value: "37",
+    change: null,
+    trend: "neutral",
+    description: "Draft content waiting for review",
+    icon: Edit3,
+    color: "amber",
+    sparkline: [30, 32, 29, 34, 35, 36, 37]
   }
 ];
 
 export function KPICards() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {kpis.map((kpi, i) => (
-        <Card key={i} className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {kpi.title}
-            </CardTitle>
-            <kpi.icon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{kpi.value}</div>
-            <p className="text-xs flex items-center mt-1">
-              <span className={`flex items-center font-medium ${kpi.trend === 'up' ? 'text-emerald-500' : 'text-red-500'}`}>
-                {kpi.trend === 'up' ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
-                {kpi.change}
-              </span>
-              <span className="text-muted-foreground ml-1">vs last month</span>
-            </p>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {kpis.map((kpi, i) => {
+        const isUp = kpi.trend === "up";
+        const isNeutral = kpi.trend === "neutral";
+        
+        // Define color styles
+        const bgOpacity = kpi.color === "emerald" ? "bg-emerald-500/10 text-emerald-600" :
+                           kpi.color === "blue" ? "bg-blue-500/10 text-blue-600" :
+                           kpi.color === "indigo" ? "bg-indigo-500/10 text-indigo-600" :
+                           "bg-amber-500/10 text-amber-600";
+        
+        const sparklineColor = kpi.color === "emerald" ? "#10b981" :
+                               kpi.color === "blue" ? "#3b82f6" :
+                               kpi.color === "indigo" ? "#6366f1" :
+                               "#f59e0b";
+
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+            whileHover={{ y: -4 }}
+            className="group"
+          >
+            <Card className="h-full border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] transition-all duration-300 hover:shadow-[0_15px_45px_-15px_rgba(30,30,30,0.06)] bg-card overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  {kpi.title}
+                </CardTitle>
+                <div className={`h-8 w-8 rounded-full flex items-center justify-center ${bgOpacity} transition-transform duration-300 group-hover:scale-110`}>
+                  <kpi.icon className="h-4 w-4" />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-3xl font-bold tracking-tight text-foreground">{kpi.value}</span>
+                  {kpi.change && (
+                    <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      isUp ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                    }`}>
+                      {isUp ? <ArrowUpRight className="h-3 w-3 mr-0.5" /> : <ArrowDownRight className="h-3 w-3 mr-0.5" />}
+                      {kpi.change}
+                    </span>
+                  )}
+                </div>
+                
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/30">
+                  <p className="text-[11px] text-muted-foreground leading-normal max-w-[140px]">
+                    {kpi.description}
+                  </p>
+                  
+                  {/* Small Visual Indicator: Sparkline SVG */}
+                  <div className="h-6 w-16">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 60 20">
+                      <polyline
+                        fill="none"
+                        stroke={sparklineColor}
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        points={kpi.sparkline
+                          .map((val, idx) => {
+                            const max = Math.max(...kpi.sparkline);
+                            const min = Math.min(...kpi.sparkline);
+                            const range = max - min || 1;
+                            const x = (idx / (kpi.sparkline.length - 1)) * 60;
+                            const y = 18 - ((val - min) / range) * 16;
+                            return `${x},${y}`;
+                          })
+                          .join(" ")}
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
