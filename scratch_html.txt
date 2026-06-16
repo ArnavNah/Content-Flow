@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ContentFlow AI - Turn One Piece of Content Into 20+ Assets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary": "#4B5E57",
+                      "outline": "#777586",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "surface-dim": "#dcd9d9",
+                      "on-surface": "#061F1A",
+                      "on-tertiary": "#ffffff",
+                      "tertiary": "#692400",
+                      "border-warm": "#DDE2DC",
+                      "error": "#ba1a1a",
+                      "inverse-surface": "#303030",
+                      "primary-fixed": "#e3dfff",
+                      "background": "#F2F4F2",
+                      "surface-tint": "#047857",
+                      "tertiary-container": "#8f3400",
+                      "surface-container": "#E8EAE6",
+                      "on-background": "#061F1A",
+                      "surface-bright": "#F2F4F2",
+                      "on-secondary-container": "#626262",
+                      "surface-card": "#FFFFFF",
+                      "on-primary-fixed": "#100069",
+                      "on-tertiary-container": "#ffb393",
+                      "on-secondary-fixed-variant": "#464747",
+                      "on-primary": "#ffffff",
+                      "primary-container": "#047857",
+                      "surface-container-highest": "#e5e2e1",
+                      "tertiary-fixed-dim": "#ffb597",
+                      "secondary-fixed": "#e4e2e2",
+                      "tertiary-fixed": "#ffdbcd",
+                      "surface-container-lowest": "#ffffff",
+                      "accent-indigo-light": "#D1FAE5",
+                      "inverse-on-surface": "#f3f0ef",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#360f00",
+                      "surface-container-low": "#E8EAE6",
+                      "inverse-primary": "#c3c0ff",
+                      "on-primary-container": "#FFFFFF",
+                      "secondary-fixed-dim": "#c7c6c6",
+                      "on-secondary": "#ffffff",
+                      "primary": "#047857",
+                      "status-error": "#B91C1C",
+                      "background-secondary": "#E8EAE6",
+                      "outline-variant": "#c7c4d7",
+                      "status-warning": "#B45309",
+                      "status-success": "#15803D",
+                      "on-tertiary-fixed-variant": "#7d2d00",
+                      "surface-container-high": "#eae7e7",
+                      "surface-variant": "#e5e2e1",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#372abf",
+                      "background-primary": "#F2F4F2",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#e1dfdf",
+                      "on-surface-variant": "#4B5E57",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "surface": "#F2F4F2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "reading-width": "720px",
+                      "container-width": "1200px",
+                      "section-gap-mobile": "64px",
+                      "unit": "8px",
+                      "section-gap-desktop": "128px",
+                      "gutter": "32px",
+                      "max-width": "1440px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Geist"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "section-heading": [
+                              "Geist"
+                      ],
+                      "eyebrow": [
+                              "Geist"
+                      ],
+                      "section-heading-mobile": [
+                              "Geist"
+                      ],
+                      "hero-display": [
+                              "Geist"
+                      ],
+                      "hero-display-mobile": [
+                              "Geist"
+                      ],
+                      "card-heading": [
+                              "Geist"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "21px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "29px",
+                                      "letterSpacing": "0",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "section-heading": [
+                              "48px",
+                              {
+                                      "lineHeight": "53px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "eyebrow": [
+                              "14px",
+                              {
+                                      "lineHeight": "21px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "section-heading-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.015em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "hero-display": [
+                              "72px",
+                              {
+                                      "lineHeight": "76px",
+                                      "letterSpacing": "-0.025em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "hero-display-mobile": [
+                              "48px",
+                              {
+                                      "lineHeight": "52px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "card-heading": [
+                              "24px",
+                              {
+                                      "lineHeight": "30px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background-primary text-on-surface font-body-lg text-body-lg antialiased selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="h-[80px] w-full sticky top-0 z-50 bg-transparent backdrop-blur-md transition-colors duration-300" id="navbar">
+<div class="flex justify-between items-center px-gutter max-w-max-width mx-auto h-full border-b border-border-warm/50">
+<!-- Brand -->
+<a class="font-hero-display text-card-heading tracking-tight text-on-surface dark:text-surface-bright flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary" data-icon="water_drop">water_drop</span>
+                ContentFlow AI
+            </a>
+<!-- Links (Desktop) -->
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary transition-colors scale-down active:scale-95 transition-transform" href="#features">Features</a>
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary transition-colors scale-down active:scale-95 transition-transform" href="#solutions">Solutions</a>
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary transition-colors scale-down active:scale-95 transition-transform" href="#pricing">Pricing</a>
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary transition-colors scale-down active:scale-95 transition-transform" href="#resources">Resources</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<a class="hidden md:block font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary transition-colors" href="#">Login</a>
+<a class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-xl hover:opacity-90 transition-opacity scale-down active:scale-95 transition-transform shadow-[0_10px_40px_-15px_rgba(67,56,202,0.3)]" href="#">Start Free Trial</a>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="pt-24 pb-section-gap-desktop px-gutter max-w-max-width mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<!-- Left: Content -->
+<div class="lg:col-span-6 space-y-8">
+<p class="font-eyebrow text-eyebrow text-primary uppercase tracking-widest">For creators, founders, and agencies</p>
+<h1 class="font-hero-display-mobile text-hero-display-mobile md:font-hero-display md:text-hero-display text-on-surface text-balance">
+                        Turn One Piece of Content Into <span class="text-primary relative inline-block">20+ Content Assets
+                            <svg class="absolute -bottom-2 left-0 w-full h-3 text-accent-indigo-light" preserveaspectratio="none" viewbox="0 0 100 10">
+<path d="M0,5 Q50,10 100,5" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-reading-width">
+                        Stop manually repurposing content. Upload a single video, podcast, or blog post, and let our sophisticated AI engine generate months of highly-targeted, platform-native assets.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 pt-4">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 rounded-xl hover:opacity-90 transition-all scale-down active:scale-95 shadow-[0_10px_40px_-15px_rgba(67,56,202,0.4)] hover:-translate-y-0.5">Start Free Trial</button>
+<button class="bg-surface-card text-on-surface font-label-md text-label-md px-8 py-4 rounded-xl border border-border-warm hover:border-primary transition-all scale-down active:scale-95 hover:-translate-y-0.5 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)]">Book Demo</button>
+</div>
+<div class="flex items-center gap-6 pt-8 border-t border-border-warm/50">
+<div>
+<p class="font-card-heading text-card-heading text-on-surface">10,000+</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Assets Created</p>
+</div>
+<div class="w-px h-8 bg-border-warm"></div>
+<div>
+<p class="font-card-heading text-card-heading text-on-surface">98%</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Time Saved</p>
+</div>
+</div>
+</div>
+<!-- Right: Editorial Composition -->
+<div class="lg:col-span-6 relative h-[600px] w-full hidden lg:block">
+<div class="absolute inset-0 bg-accent-indigo-light/30 rounded-3xl -z-10 blur-3xl transform rotate-3"></div>
+<!-- Floating Card 1: Processing -->
+<div class="absolute top-10 left-10 w-64 bg-surface-card border border-border-warm rounded-xl p-4 shadow-[0_20px_60px_-15px_rgba(30,30,30,0.05)] transform -rotate-2 hover:rotate-0 transition-transform duration-500 z-20">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="smart_toy">smart_toy</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">AI Processing</p>
+<p class="text-xs text-on-surface-variant">Analyzing input video...</p>
+</div>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full w-3/4"></div>
+</div>
+</div>
+<!-- Floating Card 2: Asset Grid -->
+<div class="absolute top-32 right-0 w-80 bg-surface-card border border-border-warm rounded-xl p-5 shadow-[0_30px_60px_-20px_rgba(30,30,30,0.08)] z-10">
+<div class="flex justify-between items-center mb-4 border-b border-border-warm/50 pb-2">
+<p class="font-label-md text-label-md text-on-surface">Generated Assets</p>
+<span class="bg-status-success/10 text-status-success text-xs px-2 py-0.5 rounded-full font-medium">24 Ready</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="article">article</span>
+<div class="flex-1">
+<p class="font-label-md text-[13px] text-on-surface">Long-form Blog Post</p>
+<p class="text-[11px] text-on-surface-variant">2,400 words • SEO Optimized</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="tag">tag</span>
+<div class="flex-1">
+<p class="font-label-md text-[13px] text-on-surface">Twitter Thread</p>
+<p class="text-[11px] text-on-surface-variant">8 tweets • High Engagement</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="mail">mail</span>
+<div class="flex-1">
+<p class="font-label-md text-[13px] text-on-surface">Newsletter Issue</p>
+<p class="text-[11px] text-on-surface-variant">Actionable • Clean formatting</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Card 3: Analytics Snippet -->
+<div class="absolute bottom-20 left-20 w-72 bg-surface-card border border-border-warm rounded-xl p-5 shadow-[0_20px_50px_-10px_rgba(30,30,30,0.05)] transform rotate-2 hover:rotate-0 transition-transform duration-500 z-30">
+<p class="font-label-md text-label-md text-on-surface mb-4">Estimated Reach</p>
+<div class="flex items-end gap-2 h-24">
+<div class="w-1/5 bg-surface-container rounded-t-sm h-[30%]"></div>
+<div class="w-1/5 bg-surface-container rounded-t-sm h-[50%]"></div>
+<div class="w-1/5 bg-surface-container rounded-t-sm h-[40%]"></div>
+<div class="w-1/5 bg-primary/20 rounded-t-sm h-[70%]"></div>
+<div class="w-1/5 bg-primary rounded-t-sm h-[100%]"></div>
+</div>
+<div class="mt-3 flex justify-between text-xs text-on-surface-variant">
+<span>Mon</span>
+<span>Fri</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof -->
+<section class="py-16 border-y border-border-warm bg-surface-card">
+<div class="max-w-max-width mx-auto px-gutter text-center">
+<p class="font-label-md text-label-md text-on-surface-variant mb-8 uppercase tracking-widest">Trusted by innovative teams worldwide</p>
+<div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 grayscale">
+<!-- Placeholder Logos -->
+<div class="font-card-heading text-card-heading text-on-surface">Acme Corp</div>
+<div class="font-card-heading text-card-heading text-on-surface">Globex</div>
+<div class="font-card-heading text-card-heading text-on-surface">Soylent</div>
+<div class="font-card-heading text-card-heading text-on-surface">Initech</div>
+<div class="font-card-heading text-card-heading text-on-surface">Umbrella</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-section-gap-desktop px-gutter max-w-max-width mx-auto" id="features">
+<div class="mb-16">
+<p class="font-eyebrow text-eyebrow text-primary uppercase tracking-widest mb-4">Features</p>
+<h2 class="font-section-heading-mobile text-section-heading-mobile md:font-section-heading md:text-section-heading text-on-surface max-w-2xl">Everything you need to build a content engine.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+<!-- Large Card -->
+<div class="md:col-span-2 bg-surface-card border border-border-warm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] flex flex-col justify-between overflow-hidden relative">
+<div class="z-10 relative">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">AI Generator</h3>
+<p class="font-label-md text-label-md text-on-surface-variant max-w-sm">Context-aware generation that sounds like you, not a robot. Custom models trained on your brand voice.</p>
+</div>
+<!-- Decorative Graphic -->
+<div class="absolute bottom-0 right-0 w-2/3 h-1/2 bg-gradient-to-tl from-accent-indigo-light to-transparent rounded-tl-3xl opacity-50"></div>
+</div>
+<!-- Tall Card -->
+<div class="md:row-span-2 bg-surface-card border border-border-warm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] flex flex-col">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="folder_special">folder_special</span>
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">Central Library</h3>
+<p class="font-label-md text-label-md text-on-surface-variant mb-8">One source of truth for all your raw and generated assets. Searchable and organized.</p>
+<div class="flex-1 bg-background-primary rounded-xl border border-border-warm p-4 space-y-3 overflow-hidden">
+<div class="h-8 bg-surface-card rounded border border-border-warm/50 flex items-center px-3 gap-2"><span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="search">search</span><div class="w-1/2 h-2 bg-surface-container rounded"></div></div>
+<div class="flex gap-2"><div class="w-1/3 h-16 bg-surface-card rounded border border-border-warm/50"></div><div class="w-1/3 h-16 bg-surface-card rounded border border-border-warm/50"></div><div class="w-1/3 h-16 bg-surface-card rounded border border-border-warm/50"></div></div>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="bg-surface-card border border-border-warm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)]">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="insights">insights</span>
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">Analytics</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Track performance across platforms to inform future generation.</p>
+</div>
+<!-- Small Card 2 -->
+<div class="bg-surface-card border border-border-warm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)]">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="group">group</span>
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">Collaboration</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Review, edit, and approve workflows built for editorial teams.</p>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-section-gap-desktop px-gutter max-w-max-width mx-auto border-t border-border-warm" id="pricing">
+<div class="text-center mb-16">
+<p class="font-eyebrow text-eyebrow text-primary uppercase tracking-widest mb-4">Pricing</p>
+<h2 class="font-section-heading-mobile text-section-heading-mobile md:font-section-heading md:text-section-heading text-on-surface">Simple, transparent pricing.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Starter Card -->
+<div class="bg-surface-card border border-border-warm rounded-2xl p-8 flex flex-col hover:-translate-y-1 transition-transform duration-300 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)]">
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">Starter</h3>
+<div class="mb-6">
+<span class="font-hero-display-mobile text-hero-display-mobile text-on-surface">$29</span>
+<span class="font-label-md text-label-md text-on-surface-variant">/mo</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-8 flex-1">Perfect for individuals starting their content engine.</p>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Basic features</span>
+</li>
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Up to 50 generations</span>
+</li>
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Standard support</span>
+</li>
+</ul>
+<button class="w-full bg-surface-container text-on-surface font-label-md text-label-md px-6 py-4 rounded-xl hover:bg-border-warm transition-colors scale-down active:scale-95">Get Started</button>
+</div>
+<!-- Pro Card -->
+<div class="bg-surface-card border-2 border-primary rounded-2xl p-8 flex flex-col relative hover:-translate-y-1 transition-transform duration-300 shadow-[0_20px_50px_-15px_rgba(4,120,87,0.15)]">
+<div class="absolute top-0 right-8 transform -translate-y-1/2 bg-primary text-on-primary font-eyebrow text-[10px] uppercase tracking-widest px-3 py-1 rounded-full">Most Popular</div>
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">Pro</h3>
+<div class="mb-6">
+<span class="font-hero-display-mobile text-hero-display-mobile text-on-surface">$79</span>
+<span class="font-label-md text-label-md text-on-surface-variant">/mo</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-8 flex-1">Everything you need to scale content operations.</p>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Unlimited generations</span>
+</li>
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>All content formats</span>
+</li>
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Custom brand voices</span>
+</li>
+</ul>
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md px-6 py-4 rounded-xl hover:opacity-90 transition-opacity scale-down active:scale-95 shadow-[0_10px_20px_-10px_rgba(4,120,87,0.4)]">Start Free Trial</button>
+</div>
+<!-- Agency Card -->
+<div class="bg-surface-card border border-border-warm rounded-2xl p-8 flex flex-col hover:-translate-y-1 transition-transform duration-300 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)]">
+<h3 class="font-card-heading text-card-heading text-on-surface mb-2">Agency</h3>
+<div class="mb-6">
+<span class="font-hero-display-mobile text-hero-display-mobile text-on-surface">$199</span>
+<span class="font-label-md text-label-md text-on-surface-variant">/mo</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-8 flex-1">For teams managing multiple clients and brands.</p>
+<ul class="space-y-4 mb-8">
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>White-label exports</span>
+</li>
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Team collaboration</span>
+</li>
+<li class="flex items-center gap-3 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="check_circle">check_circle</span>
+<span>Dedicated account manager</span>
+</li>
+</ul>
+<button class="w-full bg-surface-container text-on-surface font-label-md text-label-md px-6 py-4 rounded-xl hover:bg-border-warm transition-colors scale-down active:scale-95">Contact Sales</button>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-section-gap-desktop px-gutter max-w-max-width mx-auto border-t border-border-warm" id="faq">
+<div class="mb-16 text-center">
+<h2 class="font-section-heading-mobile text-section-heading-mobile md:font-section-heading md:text-section-heading text-on-surface">Frequently Asked Questions</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+<details class="group border-b border-border-warm pb-6">
+<summary class="flex justify-between items-center font-card-heading text-[20px] leading-tight text-on-surface cursor-pointer list-none">
+<span>How does the AI understand my brand's tone?</span>
+<span class="transition group-open:rotate-180 text-primary">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</span>
+</summary>
+<p class="text-on-surface-variant mt-4 font-body-lg text-body-lg">You can train our AI by uploading your previous content, style guides, and brand messaging docs. The system builds a custom model to ensure all generated assets sound exactly like you.</p>
+</details>
+<details class="group border-b border-border-warm pb-6">
+<summary class="flex justify-between items-center font-card-heading text-[20px] leading-tight text-on-surface cursor-pointer list-none">
+<span>Do I need a paid API key?</span>
+<span class="transition group-open:rotate-180 text-primary">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</span>
+</summary>
+<p class="text-on-surface-variant mt-4 font-body-lg text-body-lg">No. All AI generation costs are included in your subscription plan. You do not need any separate API keys from OpenAI, Anthropic, or other providers.</p>
+</details>
+<details class="group border-b border-border-warm pb-6">
+<summary class="flex justify-between items-center font-card-heading text-[20px] leading-tight text-on-surface cursor-pointer list-none">
+<span>What platforms are supported?</span>
+<span class="transition group-open:rotate-180 text-primary">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</span>
+</summary>
+<p class="text-on-surface-variant mt-4 font-body-lg text-body-lg">We support native formatting for Twitter/X, LinkedIn, Facebook, Instagram (captions), YouTube (descriptions), TikTok, Medium, Substack, and generic blog formats.</p>
+</details>
+<details class="group border-b border-border-warm pb-6">
+<summary class="flex justify-between items-center font-card-heading text-[20px] leading-tight text-on-surface cursor-pointer list-none">
+<span>Can I manage multiple clients?</span>
+<span class="transition group-open:rotate-180 text-primary">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</span>
+</summary>
+<p class="text-on-surface-variant mt-4 font-body-lg text-body-lg">Yes, our Agency plan allows you to create separate workspaces for different clients, each with their own custom trained AI models and brand voice settings.</p>
+</details>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-section-gap-desktop bg-[#FAF7F2] border-t border-border-warm">
+<div class="max-w-4xl mx-auto px-gutter text-center">
+<h2 class="font-hero-display-mobile text-hero-display-mobile md:font-hero-display md:text-hero-display text-on-surface mb-6">Ready to scale your content?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto">Join thousands of creators and marketers who are saving 10+ hours a week repurposing content with ContentFlow AI.</p>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-10 py-5 rounded-xl hover:opacity-90 transition-all scale-down active:scale-95 shadow-[0_10px_40px_-15px_rgba(67,56,202,0.4)] hover:-translate-y-0.5 text-lg">Start your 14-day free trial</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-inverse-surface w-full py-section-gap-desktop border-t border-border-warm">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 px-gutter max-w-max-width mx-auto">
+<div class="col-span-2 lg:col-span-2 space-y-6">
+<a class="font-hero-display text-card-heading text-on-surface flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary" data-icon="water_drop">water_drop</span>
+                    ContentFlow AI
+                </a>
+<p class="font-label-md text-label-md text-on-surface-variant max-w-xs">Professional content scaling infrastructure for modern teams.</p>
+</div>
+<div class="space-y-4">
+<h4 class="font-eyebrow text-eyebrow text-on-surface">Product</h4>
+<ul class="space-y-3">
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Features</a></li>
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a></li>
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Changelog</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-eyebrow text-eyebrow text-on-surface">Company</h4>
+<ul class="space-y-3">
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a></li>
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Careers</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-eyebrow text-eyebrow text-on-surface">Legal</h4>
+<ul class="space-y-3">
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-16 pt-8 border-t border-border-warm/50 px-gutter max-w-max-width mx-auto flex justify-between items-center text-on-surface-variant font-label-md text-label-md">
+<p>© 2024 ContentFlow AI. All rights reserved.</p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</div>
+</div>
+</footer>
+<script>
+        // Simple script for sticky navbar background transition
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('bg-surface-card', 'shadow-[0_2px_10px_rgba(0,0,0,0.05)]');
+                navbar.classList.remove('bg-transparent');
+            } else {
+                navbar.classList.remove('bg-surface-card', 'shadow-[0_2px_10px_rgba(0,0,0,0.05)]');
+                navbar.classList.add('bg-transparent');
+            }
+        });
+    </script>
+</body></html>
