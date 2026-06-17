@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Sparkles, Library, BarChart3, Settings } from "lucide-react";
+import { LayoutDashboard, Sparkles, Library, BarChart3, Settings, Calendar, FolderKanban } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const mobileNavItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Campaigns", href: "/dashboard/campaigns", icon: FolderKanban },
   { name: "AI Gen", href: "/dashboard/generator", icon: Sparkles },
+  { name: "Calendar", href: "/dashboard/calendar", icon: Calendar },
   { name: "Library", href: "/dashboard/library", icon: Library },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },

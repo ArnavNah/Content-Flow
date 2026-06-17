@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Sparkles, PlayCircle, Layers, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Sparkles, PlayCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 

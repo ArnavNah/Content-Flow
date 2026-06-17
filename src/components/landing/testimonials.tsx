@@ -32,7 +32,7 @@ export function Testimonials() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Loved by creators and founders</h2>
           <p className="text-lg text-muted-foreground">
-            Don't just take our word for it. Here's what teams are saying about ContentFlow AI.
+            Don&apos;t just take our word for it. Here&apos;s what teams are saying about ContentFlow AI.
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export function Testimonials() {
               className="rounded-2xl border border-border/50 bg-background p-8 flex flex-col justify-between shadow-sm relative group hover:border-primary/30 transition-colors"
             >
               <Quote className="h-8 w-8 text-primary/20 absolute top-6 right-6" />
-              <p className="text-lg mb-8 relative z-10 font-medium">"{t.quote}"</p>
+              <p className="text-lg mb-8 relative z-10 font-medium">&ldquo;{t.quote}&rdquo;</p>
               <div className="flex items-center gap-4 mt-auto">
                 <Avatar>
                   <AvatarFallback className="bg-primary/10 text-primary font-bold">{t.initials}</AvatarFallback>

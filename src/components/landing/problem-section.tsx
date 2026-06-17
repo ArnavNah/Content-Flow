@@ -52,7 +52,7 @@ export function ProblemSection() {
           >
              <div className="text-4xl mb-6 bg-blue-500/10 w-16 h-16 rounded-2xl flex items-center justify-center">⏳</div>
              <h3 className="text-xl font-bold mb-3">No Time</h3>
-             <p className="text-muted-foreground leading-relaxed">You want to be omni-channel to grow your personal brand, but you're a team of one with a business to run.</p>
+             <p className="text-muted-foreground leading-relaxed">You want to be omni-channel to grow your personal brand, but you&apos;re a team of one with a business to run.</p>
           </motion.div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Layers, LayoutDashboard, Sparkles, Library, Settings, BarChart3, CreditCard, LogOut, User } from "lucide-react";
+import { Layers, LayoutDashboard, Sparkles, Library, Settings, BarChart3, CreditCard, LogOut, User, Calendar, FolderKanban } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,10 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useWorkspace } from "@/context/workspace-context";
+
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Campaigns", href: "/dashboard/campaigns", icon: FolderKanban },
   { name: "AI Generator", href: "/dashboard/generator", icon: Sparkles },
+  { name: "Calendar", href: "/dashboard/calendar", icon: Calendar },
   { name: "Content Library", href: "/dashboard/library", icon: Library },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
 ];
@@ -26,6 +30,7 @@ const settingsItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { activeWorkspace, currentUser, logoutUser } = useWorkspace();
 
   return (
     <aside className="hidden md:flex w-64 border-r border-border/40 bg-background flex-col h-screen sticky top-0">
@@ -90,26 +95,32 @@ export function Sidebar() {
         <DropdownMenu>
           <DropdownMenuTrigger className="w-full flex items-center justify-start gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors outline-none text-left">
             <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
-              JD
+              {currentUser.initials}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium truncate">John Doe</span>
-              <span className="text-xs text-muted-foreground truncate">Personal Workspace</span>
+              <span className="text-sm font-medium truncate">{currentUser.name}</span>
+              <span className="text-xs text-muted-foreground truncate">{activeWorkspace.name}</span>
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" side="top" sideOffset={12} className="w-56">
-            <DropdownMenuItem render={<Link href="/dashboard/settings" />}>
-              <User className="h-4 w-4" />
-              <span>Profile Settings</span>
+          <DropdownMenuContent align="end" side="top" sideOffset={12} className="w-56 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">
+            <DropdownMenuItem className="cursor-pointer">
+              <Link href="/dashboard/settings" className="flex w-full items-center gap-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span>Profile Settings</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem render={<Link href="/dashboard/settings/workspace" />}>
-              <Settings className="h-4 w-4" />
-              <span>Workspace Settings</span>
+            <DropdownMenuItem className="cursor-pointer">
+              <Link href="/dashboard/settings/workspace" className="flex w-full items-center gap-2">
+                <Settings className="h-4 w-4 text-muted-foreground" />
+                <span>Workspace Settings</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem render={<Link href="/" />} variant="destructive">
-              <LogOut className="h-4 w-4" />
-              <span>Log out</span>
+            <DropdownMenuItem onClick={logoutUser} className="text-red-500 focus:text-red-500 cursor-pointer">
+              <Link href="/" className="flex w-full items-center gap-2">
+                <LogOut className="h-4 w-4" />
+                <span>Log out</span>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

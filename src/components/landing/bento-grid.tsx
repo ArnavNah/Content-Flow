@@ -10,7 +10,7 @@ export function FeatureBentoGrid() {
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">One input. Dozens of outputs.</h2>
           <p className="text-lg text-muted-foreground">
-            Our AI analyzes your source content's tone and structure, then perfectly adapts it for every major platform.
+            Our AI analyzes your source content&apos;s tone and structure, then perfectly adapts it for every major platform.
           </p>
         </div>
 

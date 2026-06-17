@@ -8,6 +8,20 @@ import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("cf_current_user");
+      if (stored) {
+        setTimeout(() => {
+          setCurrentUser(JSON.parse(stored));
+        }, 0);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,10 +50,20 @@ export function Navbar() {
           <Link href="#faq" className="hover:text-foreground transition-colors">FAQ</Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-medium hover:text-foreground transition-colors hidden sm:block">
-            Log in
-          </Link>
-          <Link href="/signup" className={buttonVariants()}>Start Free Trial</Link>
+          {currentUser ? (
+            <Link href="/dashboard" className={cn(buttonVariants(), "text-xs font-bold rounded-xl h-9")}>
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-medium hover:text-foreground transition-colors hidden sm:block">
+                Log in
+              </Link>
+              <Link href="/signup" className={cn(buttonVariants(), "text-xs font-bold rounded-xl h-9")}>
+                Start Free Trial
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

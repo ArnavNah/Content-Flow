@@ -2,18 +2,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from "recharts";
-import { Calendar, CheckCircle } from "lucide-react";
-
-const weeklyData = [
-  { day: "Mon", assets: 12 },
-  { day: "Tue", assets: 8 },
-  { day: "Wed", assets: 15 },
-  { day: "Thu", assets: 9 },
-  { day: "Fri", assets: 18 }
-];
+import { Calendar } from "lucide-react";
+import { useWorkspace } from "@/context/workspace-context";
 
 // 5 weeks of mock data, each week having 7 days (0 to 4 assets per day)
-const heatmapData = [
+const baseHeatmapData = [
   [2, 0, 1, 3, 2, 0, 0], // Week 1
   [1, 3, 0, 2, 4, 1, 0], // Week 2
   [3, 2, 1, 0, 3, 0, 0], // Week 3
@@ -24,7 +17,24 @@ const heatmapData = [
 const daysOfWeek = ["M", "T", "W", "T", "F", "S", "S"];
 
 export function WeeklyActivity() {
+  const { activeWorkspace } = useWorkspace();
+  const weeklyData = activeWorkspace.weeklyActivity;
   const totalThisWeek = weeklyData.reduce((acc, curr) => acc + curr.assets, 0);
+
+  // Scale heatmap grid depending on the workspace output volume
+  const getScaleFactor = () => {
+    switch (activeWorkspace.id) {
+      case "agency": return 2.0;
+      case "startup": return 1.4;
+      default: return 1.0;
+    }
+  };
+
+  const scale = getScaleFactor();
+  const heatmapData = baseHeatmapData.map(week =>
+    week.map(val => Math.min(4, Math.round(val * scale)))
+  );
+
 
   // Helper to color heatmap squares based on asset volume
   const getHeatColor = (value: number) => {
@@ -39,15 +49,15 @@ export function WeeklyActivity() {
   };
 
   return (
-    <Card className="border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-card flex flex-col justify-between">
-      <CardHeader className="pb-2">
+    <Card className="border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-card flex flex-col justify-between h-full">
+      <CardHeader className="pb-0">
         <CardTitle className="text-base font-bold text-foreground">Weekly Activity</CardTitle>
         <CardDescription className="text-xs text-muted-foreground mt-0.5">
           Asset creation consistency and schedule distribution
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6 flex-1 flex flex-col justify-between pt-4">
+      <CardContent className="space-y-6 flex-1 flex flex-col justify-between pt-0">
         {/* Simple Bar Chart */}
         <div className="space-y-2.5">
           <div className="flex justify-between items-baseline">

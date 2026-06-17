@@ -3,56 +3,64 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, FileText, Users, BarChart3, Edit3 } from "lucide-react";
 import { motion } from "framer-motion";
-
-const kpis = [
-  {
-    title: "Content Assets",
-    value: "2,483",
-    change: "+12%",
-    trend: "up",
-    description: "Assets created this month",
-    icon: FileText,
-    color: "emerald",
-    sparkline: [20, 24, 22, 28, 30, 26, 32]
-  },
-  {
-    title: "Total Reach",
-    value: "184K",
-    change: "+18%",
-    trend: "up",
-    description: "Audience reached across channels",
-    icon: Users,
-    color: "blue",
-    sparkline: [15, 18, 17, 21, 24, 22, 28]
-  },
-  {
-    title: "Engagement Rate",
-    value: "8.4%",
-    change: "+1.2%",
-    trend: "up",
-    description: "Average engagement across content",
-    icon: BarChart3,
-    color: "indigo",
-    sparkline: [6.5, 7.0, 7.2, 7.8, 8.0, 8.2, 8.4]
-  },
-  {
-    title: "Saved Drafts",
-    value: "37",
-    change: null,
-    trend: "neutral",
-    description: "Draft content waiting for review",
-    icon: Edit3,
-    color: "amber",
-    sparkline: [30, 32, 29, 34, 35, 36, 37]
-  }
-];
+import { useWorkspace } from "@/context/workspace-context";
 
 export function KPICards() {
+  const { activeWorkspace, kpis } = useWorkspace();
+
+  const formatReach = (val: number) => {
+    if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+    if (val >= 1000) return `${(val / 1000).toFixed(0)}K`;
+    return val.toString();
+  };
+
+  const cardsData = [
+    {
+      title: "Content Assets",
+      value: kpis.assets.toLocaleString(),
+      change: activeWorkspace.id === "personal" ? "+12%" : activeWorkspace.id === "agency" ? "+24%" : "+8%",
+      trend: "up",
+      description: "Assets created this month",
+      icon: FileText,
+      color: "emerald",
+      sparkline: [20, 24, 22, 28, 30, 26, 32]
+    },
+    {
+      title: "Total Reach",
+      value: formatReach(kpis.reach),
+      change: activeWorkspace.id === "personal" ? "+18%" : activeWorkspace.id === "agency" ? "+31%" : "+14%",
+      trend: "up",
+      description: "Audience reached across channels",
+      icon: Users,
+      color: "blue",
+      sparkline: [15, 18, 17, 21, 24, 22, 28]
+    },
+    {
+      title: "Engagement Rate",
+      value: `${kpis.engagement.toFixed(1)}%`,
+      change: activeWorkspace.id === "personal" ? "+1.2%" : activeWorkspace.id === "agency" ? "-0.4%" : "+1.8%",
+      trend: activeWorkspace.id === "agency" ? "down" : "up",
+      description: "Average engagement across content",
+      icon: BarChart3,
+      color: "indigo",
+      sparkline: [6.5, 7.0, 7.2, 7.8, 8.0, 8.2, 8.4]
+    },
+    {
+      title: "Saved Drafts",
+      value: kpis.drafts.toString(),
+      change: null,
+      trend: "neutral",
+      description: "Draft content waiting for review",
+      icon: Edit3,
+      color: "amber",
+      sparkline: [30, 32, 29, 34, 35, 36, 37]
+    }
+  ];
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {kpis.map((kpi, i) => {
+      {cardsData.map((kpi, i) => {
         const isUp = kpi.trend === "up";
-        const isNeutral = kpi.trend === "neutral";
         
         // Define color styles
         const bgOpacity = kpi.color === "emerald" ? "bg-emerald-500/10 text-emerald-600" :
@@ -72,10 +80,10 @@ export function KPICards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: i * 0.05 }}
             whileHover={{ y: -4 }}
-            className="group"
+            className="group h-full"
           >
             <Card className="h-full border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] transition-all duration-300 hover:shadow-[0_15px_45px_-15px_rgba(30,30,30,0.06)] bg-card overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-0">
                 <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   {kpi.title}
                 </CardTitle>
@@ -132,3 +140,4 @@ export function KPICards() {
     </div>
   );
 }
+

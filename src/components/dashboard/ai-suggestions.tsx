@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Trash2, Bookmark, ArrowRight, Zap, RefreshCw, X } from "lucide-react";
+import { Sparkles, Bookmark, ArrowRight, Zap, RefreshCw, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWorkspace } from "@/context/workspace-context";
 
 const initialSuggestions = [
   {
@@ -42,6 +43,7 @@ const initialSuggestions = [
 ];
 
 export function AISuggestions() {
+  const { addAsset } = useWorkspace();
   const [suggestions, setSuggestions] = useState(initialSuggestions);
 
   const handleDismiss = (id: number) => {
@@ -50,6 +52,27 @@ export function AISuggestions() {
 
   const handleReset = () => {
     setSuggestions(initialSuggestions);
+  };
+
+  const handleSaveSuggestion = (s: typeof initialSuggestions[0]) => {
+    let assetType: "LinkedIn Post" | "Twitter Thread" | "Newsletter" | "Video Script" = "LinkedIn Post";
+    if (s.type === "Repurpose") assetType = "Twitter Thread";
+    else if (s.type === "Video") assetType = "Video Script";
+    else if (s.type === "Curation") assetType = "Newsletter";
+    
+    addAsset(s.title, assetType, "Draft", 0);
+    handleDismiss(s.id);
+  };
+
+  const handleGenerateSuggestion = (title: string) => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("cf_prefill_generator", title);
+        window.location.href = "/dashboard/generator";
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   return (
@@ -84,6 +107,7 @@ export function AISuggestions() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96, y: -8 }}
               transition={{ duration: 0.25 }}
+              className="h-full"
             >
               <Card className="h-full border border-border/60 hover:border-primary/20 shadow-[0_4px_12px_rgba(0,0,0,0.01)] hover:shadow-[0_10px_25px_rgba(0,0,0,0.03)] bg-card rounded-xl flex flex-col justify-between group overflow-hidden relative">
                 {/* Dismiss Button Top Right */}
@@ -132,6 +156,7 @@ export function AISuggestions() {
                       <Button
                         size="sm"
                         variant="secondary"
+                        onClick={() => handleSaveSuggestion(s)}
                         className="h-8 px-2.5 rounded-lg border border-border/80 text-muted-foreground hover:text-foreground hover:bg-secondary bg-transparent cursor-pointer"
                         title="Save to drafts"
                       >
@@ -141,6 +166,7 @@ export function AISuggestions() {
                       {/* Generate Button */}
                       <Button
                         size="sm"
+                        onClick={() => handleGenerateSuggestion(s.title)}
                         className="h-8 px-3 rounded-lg text-xs font-semibold shadow-sm cursor-pointer"
                       >
                         <span>Generate</span>

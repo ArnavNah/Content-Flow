@@ -1,56 +1,115 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AtSign, Mail, Play, Plus, MoreHorizontal, Calendar, Eye } from "lucide-react";
 import { LinkedinIcon } from "@/components/dashboard/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
-
-const pipelineData = {
-  ideas: {
-    title: "Ideas",
-    count: 24,
-    color: "border-t-amber-500",
-    badgeColor: "bg-amber-500/10 text-amber-600",
-    items: [
-      { id: 1, title: "Top 5 AI tools we use daily", platform: "LinkedIn", icon: LinkedinIcon, tag: "Inspiration", date: "Jun 20", members: ["JD", "AS"] },
-      { id: 2, title: "Why bootstrapping is the new VC", platform: "Threads", icon: AtSign, tag: "Opinion", date: "Jun 22", members: ["JD"] },
-      { id: 3, title: "ContentFlow AI product roadshow", platform: "Video Script", icon: Play, tag: "Product", date: "Jun 25", members: ["AS", "KL"] }
-    ]
-  },
-  drafts: {
-    title: "Drafts",
-    count: 12,
-    color: "border-t-blue-500",
-    badgeColor: "bg-blue-500/10 text-blue-600",
-    items: [
-      { id: 4, title: "Scaling from 0 to 10k subscribers", platform: "Newsletter", icon: Mail, tag: "Case Study", date: "Jun 18", members: ["JD", "KL"] },
-      { id: 5, title: "How we designed our billing system", platform: "LinkedIn", icon: LinkedinIcon, tag: "Engineering", date: "Jun 19", members: ["KL"] }
-    ]
-  },
-  review: {
-    title: "In Review",
-    count: 7,
-    color: "border-t-indigo-500",
-    badgeColor: "bg-indigo-500/10 text-indigo-600",
-    items: [
-      { id: 6, title: "5 copywriting rules for landing pages", platform: "Threads", icon: AtSign, tag: "Marketing", date: "Jun 17", members: ["AS"] }
-    ]
-  },
-  published: {
-    title: "Published",
-    count: 43,
-    color: "border-t-emerald-500",
-    badgeColor: "bg-emerald-500/10 text-emerald-600",
-    items: [
-      { id: 7, title: "Building a SaaS in public: Week 1", platform: "LinkedIn", icon: LinkedinIcon, tag: "Storytelling", date: "Published Today", members: ["JD", "AS", "KL"], views: "12.3K Reach" },
-      { id: 8, title: "Stop writing boring subject lines", platform: "Newsletter", icon: Mail, tag: "Tips", date: "Published Jun 14", members: ["JD"], views: "8.4K Opens" }
-    ]
-  }
-};
+import { useWorkspace } from "@/context/workspace-context";
 
 export function ContentPipeline() {
+  const { assets, activeWorkspace } = useWorkspace();
+  const workspaceAssets = assets.filter(a => a.workspaceId === activeWorkspace.id);
+
+  const ideas = workspaceAssets.filter(a => a.status === "Idea");
+  const drafts = workspaceAssets.filter(a => a.status === "Draft");
+  const review = workspaceAssets.filter(a => a.status === "Review");
+  const published = workspaceAssets.filter(a => a.status === "Published");
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case "LinkedIn Post": return LinkedinIcon;
+      case "Twitter Thread": return AtSign;
+      case "Newsletter": return Mail;
+      case "Video Script": return Play;
+      default: return LinkedinIcon;
+    }
+  };
+
+  const formatDate = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    } catch {
+      return "Recent";
+    }
+  };
+
+  const getPlatformLabel = (type: string) => {
+    switch (type) {
+      case "LinkedIn Post": return "LinkedIn";
+      case "Twitter Thread": return "Twitter / X";
+      case "Newsletter": return "Newsletter";
+      case "Video Script": return "Video Script";
+      default: return type;
+    }
+  };
+
+  const pipelineColumns = {
+    ideas: {
+      title: "Ideas",
+      count: ideas.length,
+      color: "border-t-amber-500",
+      badgeColor: "bg-amber-500/10 text-amber-600",
+      items: ideas.slice(0, 3).map(a => ({
+        id: a.id,
+        title: a.title,
+        platform: getPlatformLabel(a.type),
+        icon: getIcon(a.type),
+        tag: "Idea",
+        date: formatDate(a.date),
+        members: ["JD"]
+      }))
+    },
+    drafts: {
+      title: "Drafts",
+      count: drafts.length,
+      color: "border-t-blue-500",
+      badgeColor: "bg-blue-500/10 text-blue-600",
+      items: drafts.slice(0, 3).map(a => ({
+        id: a.id,
+        title: a.title,
+        platform: getPlatformLabel(a.type),
+        icon: getIcon(a.type),
+        tag: "Draft",
+        date: formatDate(a.date),
+        members: ["JD", "KL"]
+      }))
+    },
+    review: {
+      title: "In Review",
+      count: review.length,
+      color: "border-t-indigo-500",
+      badgeColor: "bg-indigo-500/10 text-indigo-600",
+      items: review.slice(0, 3).map(a => ({
+        id: a.id,
+        title: a.title,
+        platform: getPlatformLabel(a.type),
+        icon: getIcon(a.type),
+        tag: "Review",
+        date: formatDate(a.date),
+        members: ["AS"]
+      }))
+    },
+    published: {
+      title: "Published",
+      count: published.length,
+      color: "border-t-emerald-500",
+      badgeColor: "bg-emerald-500/10 text-emerald-600",
+      items: published.slice(0, 3).map(a => ({
+        id: a.id,
+        title: a.title,
+        platform: getPlatformLabel(a.type),
+        icon: getIcon(a.type),
+        tag: "Published",
+        date: "Pub " + formatDate(a.date),
+        members: ["JD", "AS", "KL"],
+        views: a.performance
+      }))
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between pb-1">
@@ -66,7 +125,7 @@ export function ContentPipeline() {
 
       {/* Grid of columns - stacks on mobile, horizontal on desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Object.entries(pipelineData).map(([key, column], colIdx) => (
+        {Object.entries(pipelineColumns).map(([key, column], colIdx) => (
           <div key={key} className="flex flex-col gap-3">
             {/* Column Header */}
             <div className="flex items-center justify-between px-2.5 py-1">
@@ -100,7 +159,7 @@ export function ContentPipeline() {
                     className="cursor-pointer"
                   >
                     <Card className={`border border-border/60 shadow-[0_4px_12px_rgba(0,0,0,0.01)] transition-all duration-200 hover:shadow-[0_8px_20px_rgba(0,0,0,0.03)] border-t-2 ${column.color} bg-card rounded-lg`}>
-                      <CardContent className="p-4 space-y-3.5">
+                      <CardContent className="px-4 py-0 space-y-3">
                         <div className="flex justify-between items-start gap-2">
                           {/* Platform Badge */}
                           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-secondary/80 text-[10px] font-semibold text-muted-foreground">

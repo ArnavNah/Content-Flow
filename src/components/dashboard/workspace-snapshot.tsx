@@ -1,31 +1,114 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, FileText, Share2, Award, ArrowUpRight, CheckCircle } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Award, ArrowUpRight, CheckCircle } from "lucide-react";
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-
-const members = [
-  { name: "John Doe", role: "Owner", initials: "JD", color: "bg-emerald-500/10 text-emerald-600" },
-  { name: "Alice Smith", role: "Writer", initials: "AS", color: "bg-blue-500/10 text-blue-600" },
-  { name: "Koby Lee", role: "Editor", initials: "KL", color: "bg-indigo-500/10 text-indigo-600" }
-];
-
-const activities = [
-  { text: "LinkedIn Draft scheduled by John", time: "2h ago" },
-  { text: "Alice Smith joined Workspace", time: "5h ago" },
-  { text: "Twitter thread exported to library", time: "1d ago" }
-];
+import { useWorkspace } from "@/context/workspace-context";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { ActivityTimeline } from "@/components/dashboard/activity-timeline";
 
 export function WorkspaceSnapshot() {
-  const healthScore = 96;
+  const { activeWorkspace, assets } = useWorkspace();
+  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
+  const members = activeWorkspace.members;
+  const healthScore = activeWorkspace.healthScore;
+
+  const workspaceAssets = useMemo(() => {
+    return assets.filter(a => a.workspaceId === activeWorkspace.id);
+  }, [assets, activeWorkspace.id]);
+
+  const totalAssets = activeWorkspace.baselineKPIs.assets;
+  const publishedAssetsCount = workspaceAssets.filter(a => a.status === "Published").length + Math.round(totalAssets * 0.7);
+
+  const formatReach = (val: number) => {
+    if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+    if (val >= 1000) return `${(val / 1000).toFixed(0)}K`;
+    return val.toString();
+  };
+
+  const dynamicActivities = useMemo(() => {
+    // 1. Convert assets to activity events
+    const assetActivities = workspaceAssets.map(asset => {
+      let text = "";
+      if (asset.status === "Published") {
+        text = `Published ${asset.type}`;
+      } else if (asset.status === "Review") {
+        text = `Submitted ${asset.type} for Review`;
+      } else if (asset.status === "Idea") {
+        text = `Added ${asset.type} Idea`;
+      } else {
+        text = `Created ${asset.type} Draft`;
+      }
+
+      // Calculate time string
+      let time = "Just now";
+      const timestamp = new Date(asset.date).getTime();
+      try {
+        const diff = new Date("2026-06-17T20:00:00.000Z").getTime() - timestamp;
+        const mins = Math.floor(diff / 60000);
+        const hours = Math.floor(mins / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days > 0) time = days === 1 ? "1d ago" : `${days}d ago`;
+        else if (hours > 0) time = `${hours}h ago`;
+        else if (mins > 0) time = `${mins}m ago`;
+      } catch {
+        time = "Recent";
+      }
+
+      return {
+        text,
+        time,
+        timestamp
+      };
+    });
+
+    // 2. Convert workspace members to activity events
+    const memberActivities = members.map((m, idx) => {
+      let time = `${idx + 1}d ago`;
+      let timestamp = new Date("2026-06-17T20:00:00.000Z").getTime() - (idx + 1) * 24 * 60 * 60 * 1000;
+
+      // If the member is Steve Jobs (or not in initial member list), it means they were newly invited in the session!
+      const initialNames = [
+        "John Doe", "Alice Smith", "Koby Lee", 
+        "Sarah Connor", "Marcus Aurelius", "Cleopatra Philopator", 
+        "Elon Musk", "Gwynne Shotwell"
+      ];
+      if (!initialNames.includes(m.name)) {
+        time = "Just now";
+        timestamp = new Date("2026-06-17T20:00:00.000Z").getTime();
+      }
+
+      return {
+        text: `${m.name} joined Workspace`,
+        time,
+        timestamp
+      };
+    });
+
+    // 3. Merge, sort by timestamp (descending), and slice to 3
+    const merged = [...assetActivities, ...memberActivities].sort((a, b) => b.timestamp - a.timestamp);
+    
+    // If we have fewer than 3, pad with a workspace initialized event
+    if (merged.length < 3) {
+      merged.push({
+        text: `${activeWorkspace.name} setup completed`,
+        time: "3d ago",
+        timestamp: new Date("2026-06-17T20:00:00.000Z").getTime() - 3 * 24 * 60 * 60 * 1000
+      });
+    }
+
+    return merged.slice(0, 3);
+  }, [workspaceAssets, members, activeWorkspace.name]);
 
   return (
-    <Card className="border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-card flex flex-col justify-between">
-      <CardHeader className="pb-3">
+    <Card className="border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-card flex flex-col justify-between h-full">
+      <CardHeader className="pb-0">
         <CardTitle className="text-base font-bold text-foreground">Workspace Snapshot</CardTitle>
         <CardDescription className="text-xs text-muted-foreground mt-0.5">
-          Active: <span className="font-bold text-foreground">Personal Brand</span>
+          Active: <span className="font-bold text-foreground">{activeWorkspace.name}</span>
         </CardDescription>
       </CardHeader>
       
@@ -75,18 +158,18 @@ export function WorkspaceSnapshot() {
           </div>
           <div className="border border-border/60 rounded-xl p-3 bg-secondary/10 hover:bg-secondary/25 transition-colors">
             <span className="text-[10px] font-semibold text-muted-foreground uppercase">Assets</span>
-            <div className="text-sm font-bold text-foreground mt-0.5">420 total</div>
+            <div className="text-sm font-bold text-foreground mt-0.5">{totalAssets.toLocaleString()} total</div>
           </div>
           <div className="border border-border/60 rounded-xl p-3 bg-secondary/10 hover:bg-secondary/25 transition-colors">
             <span className="text-[10px] font-semibold text-muted-foreground uppercase">Reach</span>
             <div className="text-sm font-bold text-emerald-600 flex items-center mt-0.5">
-              <span>54K</span>
+              <span>{formatReach(activeWorkspace.baselineKPIs.reach)}</span>
               <ArrowUpRight className="h-3.5 w-3.5" />
             </div>
           </div>
           <div className="border border-border/60 rounded-xl p-3 bg-secondary/10 hover:bg-secondary/25 transition-colors">
             <span className="text-[10px] font-semibold text-muted-foreground uppercase">Published</span>
-            <div className="text-sm font-bold text-foreground mt-0.5">83 items</div>
+            <div className="text-sm font-bold text-foreground mt-0.5">{publishedAssetsCount.toLocaleString()} items</div>
           </div>
         </div>
 
@@ -103,7 +186,9 @@ export function WorkspaceSnapshot() {
                 </Avatar>
               ))}
             </div>
-            <button className="text-[10px] font-semibold text-primary hover:underline cursor-pointer">Invite</button>
+            <Link href="/dashboard/settings/workspace" className="text-[10px] font-semibold text-primary hover:underline cursor-pointer">
+              Invite
+            </Link>
           </div>
         </div>
 
@@ -111,9 +196,17 @@ export function WorkspaceSnapshot() {
 
         {/* Recent Activity List */}
         <div className="space-y-2">
-          <h4 className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Recent Workspace Activity</h4>
+          <div className="flex justify-between items-center">
+            <h4 className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Recent Workspace Activity</h4>
+            <button 
+              onClick={() => setIsTimelineOpen(true)}
+              className="text-[10px] font-semibold text-primary hover:underline cursor-pointer bg-transparent border-0 p-0"
+            >
+              View Log
+            </button>
+          </div>
           <div className="space-y-2.5">
-            {activities.map((a, idx) => (
+            {dynamicActivities.map((a, idx) => (
               <div key={idx} className="flex justify-between items-start text-[11px] gap-2 leading-tight">
                 <span className="font-semibold text-foreground flex items-center gap-1.5">
                   <CheckCircle className="h-3 w-3 text-emerald-500 shrink-0" />
@@ -125,6 +218,8 @@ export function WorkspaceSnapshot() {
           </div>
         </div>
       </CardContent>
+
+      <ActivityTimeline isOpen={isTimelineOpen} onClose={() => setIsTimelineOpen(false)} />
     </Card>
   );
 }

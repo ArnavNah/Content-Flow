@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend, CartesianGrid } from "recharts";
 import { cn } from "@/lib/utils";
+import { useWorkspace } from "@/context/workspace-context";
 
 // Mock data representing growth over time
 const mockData = {
@@ -34,9 +35,24 @@ const mockData = {
 };
 
 export function PerformanceChart() {
-  const [activeMetric, setActiveMetric] = useState<"reach" | "views" | "engagement">("reach");
+  const { activeWorkspace } = useWorkspace();
+  const [activeMetric, setActiveMetric] = useState<"reach" | "views" | "engagement" >("reach");
 
-  const currentData = mockData[activeMetric];
+  const getScaleFactor = () => {
+    switch (activeWorkspace.id) {
+      case "agency": return 4.5;
+      case "startup": return 2.0;
+      default: return 1.0;
+    }
+  };
+
+  const scale = getScaleFactor();
+  const currentData = mockData[activeMetric].map(item => ({
+    name: item.name,
+    LinkedIn: Math.round(item.LinkedIn * scale),
+    Twitter: Math.round(item.Twitter * scale),
+    Newsletter: Math.round(item.Newsletter * scale),
+  }));
 
   const formatYAxis = (value: number) => {
     if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
@@ -44,17 +60,11 @@ export function PerformanceChart() {
     return value.toString();
   };
 
-  const getMetricLabel = () => {
-    switch (activeMetric) {
-      case "reach": return "Audience Reach";
-      case "views": return "Total Views";
-      case "engagement": return "Total Engagements";
-    }
-  };
+
 
   return (
-    <Card className="col-span-1 lg:col-span-2 border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-card">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
+    <Card className="col-span-1 lg:col-span-2 border border-border/60 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-card h-full">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-0">
         <div>
           <CardTitle className="text-base font-bold text-foreground">Content Performance</CardTitle>
           <CardDescription className="text-xs text-muted-foreground mt-0.5">
@@ -81,7 +91,7 @@ export function PerformanceChart() {
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2">
+      <CardContent className="pt-0">
         <div className="h-[320px] w-full pr-2">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={currentData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>

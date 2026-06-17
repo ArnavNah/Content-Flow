@@ -1,20 +1,41 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Area, AreaChart, Bar, BarChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
+import { useWorkspace } from "@/context/workspace-context";
 
-const performanceData = [
+// Base performance data (Week/Month based)
+const baseMonthlyPerformance = [
   { date: "Jan", linkedin: 4000, twitter: 2400, newsletter: 2400 },
-  { date: "Feb", linkedin: 3000, twitter: 1398, newsletter: 2210 },
-  { date: "Mar", linkedin: 2000, twitter: 9800, newsletter: 2290 },
-  { date: "Apr", linkedin: 2780, twitter: 3908, newsletter: 2000 },
-  { date: "May", linkedin: 1890, twitter: 4800, newsletter: 2181 },
-  { date: "Jun", linkedin: 2390, twitter: 3800, newsletter: 2500 },
-  { date: "Jul", linkedin: 3490, twitter: 4300, newsletter: 2100 },
+  { date: "Feb", linkedin: 5500, twitter: 3900, newsletter: 2800 },
+  { date: "Mar", linkedin: 7200, twitter: 9800, newsletter: 3300 },
+  { date: "Apr", linkedin: 9100, twitter: 11400, newsletter: 4100 },
+  { date: "May", linkedin: 11800, twitter: 14200, newsletter: 5400 },
+  { date: "Jun", linkedin: 15400, twitter: 18600, newsletter: 6800 },
+  { date: "Jul", linkedin: 19500, twitter: 24200, newsletter: 8100 },
 ];
 
-const engagementData = [
+const baseWeeklyPerformance = [
+  { date: "Wk 1", linkedin: 850, twitter: 600, newsletter: 500 },
+  { date: "Wk 2", linkedin: 1200, twitter: 950, newsletter: 550 },
+  { date: "Wk 3", linkedin: 1500, twitter: 1400, newsletter: 620 },
+  { date: "Wk 4", linkedin: 1950, twitter: 2100, newsletter: 720 },
+];
+
+const baseDailyPerformance = [
+  { date: "Mon", linkedin: 120, twitter: 80, newsletter: 0 },
+  { date: "Tue", linkedin: 180, twitter: 110, newsletter: 0 },
+  { date: "Wed", linkedin: 220, twitter: 190, newsletter: 500 },
+  { date: "Thu", linkedin: 190, twitter: 150, newsletter: 0 },
+  { date: "Fri", linkedin: 310, twitter: 280, newsletter: 0 },
+  { date: "Sat", linkedin: 90, twitter: 60, newsletter: 0 },
+  { date: "Sun", linkedin: 70, twitter: 40, newsletter: 0 },
+];
+
+// Engagement breakdown base data
+const baseEngagementDaily = [
   { name: "Mon", likes: 400, comments: 240, shares: 100 },
   { name: "Tue", likes: 300, comments: 139, shares: 80 },
   { name: "Wed", likes: 500, comments: 380, shares: 150 },
@@ -25,94 +46,157 @@ const engagementData = [
 ];
 
 export default function AnalyticsPage() {
+  const { activeWorkspace } = useWorkspace();
+  const [timeframe, setTimeframe] = useState("30");
+
+  const scaleFactor = useMemo(() => {
+    switch (activeWorkspace.id) {
+      case "agency": return 4.5;
+      case "startup": return 2.0;
+      default: return 1.0;
+    }
+  }, [activeWorkspace.id]);
+
+  // Adjust performance chart points dynamically based on timeframe
+  const currentPerformanceData = useMemo(() => {
+    let rawData = baseWeeklyPerformance; // Default 30 days (4 weeks)
+    
+    if (timeframe === "7") {
+      rawData = baseDailyPerformance;
+    } else if (timeframe === "90") {
+      rawData = baseMonthlyPerformance.slice(4, 7); // Last 3 months (May, Jun, Jul)
+    } else if (timeframe === "365") {
+      rawData = baseMonthlyPerformance; // 12 Months
+    }
+
+    return rawData.map(item => ({
+      ...item,
+      linkedin: Math.round(item.linkedin * scaleFactor),
+      twitter: Math.round(item.twitter * scaleFactor),
+      newsletter: Math.round(item.newsletter * scaleFactor),
+    }));
+  }, [timeframe, scaleFactor]);
+
+  // Adjust engagement breakdown chart points
+  const currentEngagementData = useMemo(() => {
+    // Generate different aggregates or scale daily base
+    const multiplier = timeframe === "7" ? 0.3 : timeframe === "90" ? 3.0 : timeframe === "365" ? 12.0 : 1.0;
+    
+    return baseEngagementDaily.map(item => ({
+      name: item.name,
+      likes: Math.round(item.likes * scaleFactor * multiplier),
+      comments: Math.round(item.comments * scaleFactor * multiplier),
+      shares: Math.round(item.shares * scaleFactor * multiplier),
+    }));
+  }, [timeframe, scaleFactor]);
+
+  const formatYAxis = (value: number) => {
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
+    return value.toString();
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-          <p className="text-muted-foreground mt-1">Deep dive into your content performance and growth.</p>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">Analytics</h1>
+          <p className="text-muted-foreground mt-1">
+            Deep dive into <span className="font-bold text-foreground">{activeWorkspace.name}</span> performance and growth.
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Select defaultValue="30">
-            <SelectTrigger className="w-[180px]">
+          <Select value={timeframe} onValueChange={(val) => setTimeframe(val || "30")}>
+            <SelectTrigger className="w-[180px] bg-card border-border/80 h-9 text-xs rounded-lg shadow-sm">
               <SelectValue placeholder="Select timeframe" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-              <SelectItem value="365">Last 12 months</SelectItem>
+              <SelectItem value="7" className="text-xs">Last 7 days</SelectItem>
+              <SelectItem value="30" className="text-xs">Last 30 days</SelectItem>
+              <SelectItem value="90" className="text-xs">Last 90 days</SelectItem>
+              <SelectItem value="365" className="text-xs">Last 12 months</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
+        {/* Audience Reach Chart */}
+        <Card className="border border-border/60 shadow-sm bg-card">
           <CardHeader>
-            <CardTitle>Audience Reach</CardTitle>
-            <CardDescription>Total impressions across all connected platforms</CardDescription>
+            <CardTitle className="text-base font-bold text-foreground">Audience Reach</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground mt-0.5">
+              Total impressions across all connected channels
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] w-full">
+            <div className="h-[350px] w-full pr-2">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={performanceData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <AreaChart data={currentPerformanceData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorLinkedin" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#047857" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#047857" stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorTwitter" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#0284c7" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#0284c7" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
-                  <Area type="monotone" dataKey="linkedin" stroke="#2563eb" fillOpacity={1} fill="url(#colorLinkedin)" />
-                  <Area type="monotone" dataKey="twitter" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorTwitter)" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border)/0.3)" />
+                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} dy={5} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatYAxis} dx={-5} />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '12px', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.06)', fontSize: '11px', fontWeight: '600' }} />
+                  <Area type="monotone" dataKey="linkedin" stroke="#047857" strokeWidth={2} fillOpacity={1} fill="url(#colorLinkedin)" name="LinkedIn" />
+                  <Area type="monotone" dataKey="twitter" stroke="#0284c7" strokeWidth={2} fillOpacity={1} fill="url(#colorTwitter)" name="Twitter / X" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        {/* Engagement Breakdown Chart */}
+        <Card className="border border-border/60 shadow-sm bg-card">
           <CardHeader>
-            <CardTitle>Engagement Breakdown</CardTitle>
-            <CardDescription>Likes, comments, and shares by day</CardDescription>
+            <CardTitle className="text-base font-bold text-foreground">Engagement Breakdown</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground mt-0.5">
+              Likes, comments, and shares distribution
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] w-full">
+            <div className="h-[350px] w-full pr-2">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={engagementData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
-                  <Bar dataKey="likes" stackId="a" fill="hsl(var(--primary))" radius={[0, 0, 4, 4]} />
-                  <Bar dataKey="comments" stackId="a" fill="#3b82f6" />
-                  <Bar dataKey="shares" stackId="a" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
+                <BarChart data={currentEngagementData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border)/0.3)" />
+                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} dy={5} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatYAxis} dx={-5} />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '12px', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.06)', fontSize: '11px', fontWeight: '600' }} />
+                  <Bar dataKey="likes" stackId="a" fill="hsl(var(--primary))" radius={[0, 0, 4, 4]} name="Likes" />
+                  <Bar dataKey="comments" stackId="a" fill="#0284c7" name="Comments" />
+                  <Bar dataKey="shares" stackId="a" fill="#ea580c" radius={[4, 4, 0, 0]} name="Shares" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm col-span-1 lg:col-span-2">
+        {/* Newsletter Subscriber Growth Chart */}
+        <Card className="border border-border/60 shadow-sm bg-card col-span-1 lg:col-span-2">
           <CardHeader>
-            <CardTitle>Newsletter Subscriber Growth</CardTitle>
-            <CardDescription>Cumulative new subscribers over time</CardDescription>
+            <CardTitle className="text-base font-bold text-foreground">Newsletter Subscriber Growth</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground mt-0.5">
+              Cumulative new newsletter subscribers over time
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full">
+            <div className="h-[300px] w-full pr-2">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={performanceData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
-                  <Line type="monotone" dataKey="newsletter" stroke="#f97316" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                <LineChart data={currentPerformanceData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border)/0.3)" />
+                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} dy={5} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatYAxis} dx={-5} />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '12px', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.06)', fontSize: '11px', fontWeight: '600' }} />
+                  <Line type="monotone" dataKey="newsletter" stroke="#ea580c" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} name="Email Subscribers" />
                 </LineChart>
               </ResponsiveContainer>
             </div>

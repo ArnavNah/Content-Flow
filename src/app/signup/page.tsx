@@ -39,6 +39,19 @@ export default function SignupPage() {
     if (!name || !email || !password || !agree) return;
     
     setLoading(true);
+
+    const initials = name.split(" ").map(p => p[0]).join("").toUpperCase().slice(0, 2) || "U";
+    
+    try {
+      localStorage.setItem("cf_current_user", JSON.stringify({
+        name: name,
+        email: email,
+        initials: initials
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+
     // Simulate API call
     setTimeout(() => {
       router.push("/dashboard");
@@ -47,6 +60,21 @@ export default function SignupPage() {
 
   const handleSocialLogin = (provider: string) => {
     setProviderLoading(provider);
+    
+    const providerEmail = `${provider}@company.com`;
+    const providerName = provider.charAt(0).toUpperCase() + provider.slice(1) + " User";
+    const initials = providerName.split(" ").map(p => p[0]).join("").toUpperCase().slice(0, 2) || "U";
+
+    try {
+      localStorage.setItem("cf_current_user", JSON.stringify({
+        name: providerName,
+        email: providerEmail,
+        initials: initials
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+
     setTimeout(() => {
       router.push("/dashboard");
     }, 1500);

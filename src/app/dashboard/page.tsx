@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { KPICards } from "@/components/dashboard/kpi-cards";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { ContentMix } from "@/components/dashboard/content-mix";
@@ -11,7 +11,8 @@ import { WorkspaceSnapshot } from "@/components/dashboard/workspace-snapshot";
 import { WeeklyActivity } from "@/components/dashboard/weekly-activity";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { EmptyState } from "@/components/dashboard/empty-state";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { 
   Sparkles, 
   DownloadCloud, 
@@ -31,23 +32,20 @@ import {
   WorkspaceSnapshotSkeleton 
 } from "@/components/dashboard/skeletons";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWorkspace } from "@/context/workspace-context";
+import Link from "next/link";
 
 type DashboardState = "normal" | "loading" | "empty";
 
 export default function DashboardOverview() {
+  const { activeWorkspace } = useWorkspace();
   const [dbState, setDbState] = useState<DashboardState>("normal");
   const [showControls, setShowControls] = useState(false);
-  const [greeting, setGreeting] = useState("Good morning");
-
-  useEffect(() => {
+  const greeting = useMemo(() => {
     const hours = new Date().getHours();
-    if (hours >= 5 && hours < 12) {
-      setGreeting("Good morning");
-    } else if (hours >= 12 && hours < 17) {
-      setGreeting("Good afternoon");
-    } else {
-      setGreeting("Good evening");
-    }
+    if (hours >= 5 && hours < 12) return "Good morning";
+    if (hours >= 12 && hours < 17) return "Good afternoon";
+    return "Good evening";
   }, []);
 
   // Switch to normal state after clicking "Generate Content" in empty state
@@ -59,7 +57,7 @@ export default function DashboardOverview() {
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-12 relative min-h-screen">
+    <div className="flex flex-col gap-6 pb-12 relative min-h-screen">
       
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-card border border-border/60 rounded-2xl p-6 shadow-[0_10px_40px_-15px_rgba(30,30,30,0.03)] bg-gradient-to-r from-card to-secondary/20">
@@ -72,18 +70,22 @@ export default function DashboardOverview() {
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 text-xs font-semibold text-muted-foreground mt-3 border border-border/40">
             <Layers className="h-3.5 w-3.5 text-primary" />
             <span>Workspace:</span>
-            <span className="text-foreground font-bold">Personal Brand</span>
+            <span className="text-foreground font-bold">{activeWorkspace.name}</span>
           </div>
         </div>
 
         {/* Header Actions */}
         <div className="flex flex-wrap items-center gap-3">
-          <Button 
-            onClick={() => handleGenerateFromEmpty()} 
-            className="rounded-full shadow-sm hover:shadow-md transition-all duration-200 h-10 px-5 text-xs font-bold shrink-0 cursor-pointer"
+          <Link 
+            href="/dashboard/generator"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "rounded-full shadow-sm hover:shadow-md transition-all duration-200 h-10 px-5 text-xs font-bold shrink-0 cursor-pointer flex items-center justify-center"
+            )}
           >
             <Sparkles className="mr-1.5 h-3.5 w-3.5" /> Generate Content
-          </Button>
+          </Link>
+
           <Button 
             variant="secondary" 
             className="rounded-full border border-border/80 text-muted-foreground hover:text-foreground hover:bg-secondary h-10 px-5 text-xs font-bold bg-card shrink-0 cursor-pointer"
@@ -138,15 +140,19 @@ export default function DashboardOverview() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="space-y-8"
+            className="space-y-6"
           >
             {/* KPI Cards (answering "How is it performing?") */}
-            <KPICards />
+            <div id="kpi-cards">
+              <KPICards />
+            </div>
 
             {/* Performance & Mix Section (answering "How is it performing?") */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <PerformanceChart />
-              <ContentMix />
+              <div id="content-mix" className="h-full flex flex-col">
+                <ContentMix />
+              </div>
             </div>
 
             {/* Content Pipeline Section (answering "What content do I have?") */}
@@ -154,7 +160,7 @@ export default function DashboardOverview() {
 
             {/* AI Suggestions Section (answering "What should I create next?") */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 h-full flex flex-col" id="ai-suggestions">
                 <AISuggestions />
               </div>
               <WorkspaceSnapshot />
@@ -163,13 +169,15 @@ export default function DashboardOverview() {
             {/* Weekly Consistency & Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <WeeklyActivity />
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 h-full flex flex-col">
                 <RecentContent />
               </div>
             </div>
 
             {/* Quick Actions (answering "What should I create next?") */}
-            <QuickActions />
+            <div id="quick-actions">
+              <QuickActions />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

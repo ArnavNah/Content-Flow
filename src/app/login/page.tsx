@@ -36,6 +36,20 @@ export default function LoginPage() {
     if (!email || !password) return;
     
     setLoading(true);
+    
+    const inferredName = email.split("@")[0].split(/[._+-]/).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+    const initials = inferredName.split(" ").map(p => p[0]).join("").toUpperCase().slice(0, 2) || "U";
+    
+    try {
+      localStorage.setItem("cf_current_user", JSON.stringify({
+        name: inferredName,
+        email: email,
+        initials: initials
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+
     // Simulate API call
     setTimeout(() => {
       router.push("/dashboard");
@@ -44,6 +58,21 @@ export default function LoginPage() {
 
   const handleSocialLogin = (provider: string) => {
     setProviderLoading(provider);
+    
+    const providerEmail = `${provider}@company.com`;
+    const providerName = provider.charAt(0).toUpperCase() + provider.slice(1) + " User";
+    const initials = providerName.split(" ").map(p => p[0]).join("").toUpperCase().slice(0, 2) || "U";
+
+    try {
+      localStorage.setItem("cf_current_user", JSON.stringify({
+        name: providerName,
+        email: providerEmail,
+        initials: initials
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+
     setTimeout(() => {
       router.push("/dashboard");
     }, 1500);
@@ -119,7 +148,7 @@ export default function LoginPage() {
           <div className="space-y-2 text-center md:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="text-primary hover:underline font-medium">
                 Sign up for free
               </Link>

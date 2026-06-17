@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AtSign, Mail, Plus, ArrowRight, DownloadCloud, Sparkles } from "lucide-react";
 import { LinkedinIcon } from "@/components/dashboard/icons";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 const actions = [
   {
@@ -54,6 +55,33 @@ const actions = [
 ];
 
 export function QuickActions() {
+  const router = useRouter();
+
+  const handleAction = (title: string) => {
+    try {
+      if (title === "Generate LinkedIn Post") {
+        localStorage.setItem("cf_prefill_platform", "linkedin");
+        localStorage.setItem("cf_prefill_source", "notes");
+        router.push("/dashboard/generator");
+      } else if (title === "Generate Twitter Thread") {
+        localStorage.setItem("cf_prefill_platform", "twitter");
+        localStorage.setItem("cf_prefill_source", "notes");
+        router.push("/dashboard/generator");
+      } else if (title === "Generate Newsletter") {
+        localStorage.setItem("cf_prefill_platform", "newsletter");
+        localStorage.setItem("cf_prefill_source", "notes");
+        router.push("/dashboard/generator");
+      } else if (title === "Create Workspace") {
+        router.push("/dashboard/settings/workspace");
+      } else if (title === "Import Content") {
+        localStorage.setItem("cf_prefill_source", "url");
+        router.push("/dashboard/generator");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -75,6 +103,7 @@ export function QuickActions() {
               transition={{ duration: 0.3, delay: idx * 0.05 }}
               whileHover={{ y: -3 }}
               className="cursor-pointer"
+              onClick={() => handleAction(act.title)}
             >
               <Card className={`h-full border border-border/60 shadow-[0_4px_12px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.03)] bg-card rounded-xl overflow-hidden flex flex-col justify-between ${act.hoverBg} group`}>
                 <CardContent className="p-4 flex flex-col justify-between h-full gap-4">
