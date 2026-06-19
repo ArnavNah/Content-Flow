@@ -3,7 +3,11 @@
 
 ContentFlow AI is a premium, portfolio-grade AI content repurposing platform built to look like a funded startup. It allows users to convert blog posts, videos, podcasts, and newsletters into dozens of ready-to-publish social assets (LinkedIn posts, Twitter threads, newsletters, and short-form video scripts) in seconds.
 
-![ContentFlow AI Dashboard](public/screenshot.png)
+### 🌐 Website Landing Page
+![ContentFlow AI Landing Page](public/landing.png)
+
+### 📊 Platform Dashboard
+![ContentFlow AI Dashboard](public/dashboard.png)
 
 ---
 
@@ -34,6 +38,11 @@ ContentFlow AI is a premium, portfolio-grade AI content repurposing platform bui
 ### 5. Multi-Member Workspaces & Billing
 * Full workspace management (invite members, assign roles, manage profiles).
 * Dedicated billing dashboard containing mock plan details, usage tracking cards, and past invoices.
+
+### 6. Interactive Content Pipeline (Kanban Board)
+* **Trello-style Drag and Drop**: High-performance, butter-smooth card movement between status columns with real-time coordinate tracking and dynamic, zero-jump container placeholders.
+* **Custom Workflow Groups**: Create, delete, or customize workflow columns with various color accents (Slate, Purple, Pink, Orange, Teal) to track specialized stages.
+
 
 ---
 
