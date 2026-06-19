@@ -46,6 +46,8 @@ export default function LoginPage() {
         email: email,
         initials: initials
       }));
+      localStorage.setItem("cf_onboarding_completed", "true");
+      localStorage.setItem("cf_tour_completed", "true");
     } catch (err) {
       console.error(err);
     }
@@ -69,6 +71,8 @@ export default function LoginPage() {
         email: providerEmail,
         initials: initials
       }));
+      localStorage.setItem("cf_onboarding_completed", "true");
+      localStorage.setItem("cf_tour_completed", "true");
     } catch (err) {
       console.error(err);
     }

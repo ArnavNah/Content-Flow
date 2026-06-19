@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Layers, LayoutDashboard, Sparkles, Library, Settings, BarChart3, CreditCard, LogOut, User, Calendar, FolderKanban } from "lucide-react";
+import { Layers, LayoutDashboard, Sparkles, Library, Settings, BarChart3, CreditCard, LogOut, User, Calendar, FolderKanban, Kanban, Lightbulb, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,9 @@ import { useWorkspace } from "@/context/workspace-context";
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Content Pipeline", href: "/dashboard/pipeline", icon: Kanban },
+  { name: "AI Ideas & Suggestions", href: "/dashboard/ideas", icon: Lightbulb },
+  { name: "Workspace Snapshot", href: "/dashboard/workspace", icon: Users },
   { name: "Campaigns", href: "/dashboard/campaigns", icon: FolderKanban },
   { name: "AI Generator", href: "/dashboard/generator", icon: Sparkles },
   { name: "Calendar", href: "/dashboard/calendar", icon: Calendar },
@@ -30,7 +33,7 @@ const settingsItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { activeWorkspace, currentUser, logoutUser } = useWorkspace();
+  const { activeWorkspace, currentUser, logoutUser, isLoaded } = useWorkspace();
 
   return (
     <aside className="hidden md:flex w-64 border-r border-border/40 bg-background flex-col h-screen sticky top-0">
@@ -95,11 +98,11 @@ export function Sidebar() {
         <DropdownMenu>
           <DropdownMenuTrigger className="w-full flex items-center justify-start gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors outline-none text-left">
             <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
-              {currentUser.initials}
+              {isLoaded ? currentUser.initials : ""}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium truncate">{currentUser.name}</span>
-              <span className="text-xs text-muted-foreground truncate">{activeWorkspace.name}</span>
+              <span className="text-sm font-medium truncate">{isLoaded ? currentUser.name : ""}</span>
+              <span className="text-xs text-muted-foreground truncate">{isLoaded ? activeWorkspace.name : ""}</span>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" side="top" sideOffset={12} className="w-56 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">

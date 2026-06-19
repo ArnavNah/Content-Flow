@@ -4,10 +4,7 @@ import { useState, useMemo } from "react";
 import { KPICards } from "@/components/dashboard/kpi-cards";
 import { PerformanceChart } from "@/components/dashboard/performance-chart";
 import { ContentMix } from "@/components/dashboard/content-mix";
-import { ContentPipeline } from "@/components/dashboard/content-pipeline";
-import { AISuggestions } from "@/components/dashboard/ai-suggestions";
 import { RecentContent } from "@/components/dashboard/recent-content";
-import { WorkspaceSnapshot } from "@/components/dashboard/workspace-snapshot";
 import { WeeklyActivity } from "@/components/dashboard/weekly-activity";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { EmptyState } from "@/components/dashboard/empty-state";
@@ -155,16 +152,6 @@ export default function DashboardOverview() {
               </div>
             </div>
 
-            {/* Content Pipeline Section (answering "What content do I have?") */}
-            <ContentPipeline />
-
-            {/* AI Suggestions Section (answering "What should I create next?") */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 h-full flex flex-col" id="ai-suggestions">
-                <AISuggestions />
-              </div>
-              <WorkspaceSnapshot />
-            </div>
 
             {/* Weekly Consistency & Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

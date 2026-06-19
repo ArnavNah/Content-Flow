@@ -193,7 +193,9 @@ export default function GeneratorPage() {
         }
 
         if (storedTemplates) {
-          setTemplates(JSON.parse(storedTemplates));
+          setTimeout(() => {
+            setTemplates(JSON.parse(storedTemplates));
+          }, 0);
         }
       } catch (e) {
         console.error(e);

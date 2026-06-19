@@ -13,11 +13,11 @@ export default function DashboardLayout({
 }) {
   return (
     <WorkspaceProvider>
-      <div className="flex min-h-screen bg-muted/10">
+      <div className="flex h-screen bg-muted/10 overflow-hidden">
         <Sidebar />
-        <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto pb-16 md:pb-0">
           <Header />
-          <main className="flex-1 p-4 md:p-8 overflow-auto">
+          <main className="flex-1 p-4 md:p-8">
             <div className="max-w-6xl mx-auto">
               {children}
             </div>

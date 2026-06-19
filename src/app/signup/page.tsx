@@ -48,6 +48,8 @@ export default function SignupPage() {
         email: email,
         initials: initials
       }));
+      localStorage.removeItem("cf_onboarding_completed");
+      localStorage.removeItem("cf_tour_completed");
     } catch (err) {
       console.error(err);
     }
@@ -71,6 +73,8 @@ export default function SignupPage() {
         email: providerEmail,
         initials: initials
       }));
+      localStorage.removeItem("cf_onboarding_completed");
+      localStorage.removeItem("cf_tour_completed");
     } catch (err) {
       console.error(err);
     }

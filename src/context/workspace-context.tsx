@@ -95,155 +95,109 @@ interface WorkspaceContextType {
   addCampaign: (name: string, description: string, type: Campaign["type"], startDate: string, endDate: string, members: string[], useTemplate?: boolean) => Campaign;
   updateCampaign: (id: number, updated: Partial<Campaign>) => void;
   deleteCampaign: (id: number) => void;
+
+  // Hydration safety flag
+  isLoaded: boolean;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const [activeWorkspaceId, setActiveWorkspaceIdState] = useState<"personal" | "agency" | "startup">(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedWorkspaceId = localStorage.getItem("cf_active_workspace_id");
-        if (storedWorkspaceId && ["personal", "agency", "startup"].includes(storedWorkspaceId)) {
-          return storedWorkspaceId as "personal" | "agency" | "startup";
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return "personal";
-  });
+  const [activeWorkspaceId, setActiveWorkspaceIdState] = useState<"personal" | "agency" | "startup">("personal");
 
-  const [workspaces, setWorkspaces] = useState<WorkspaceConfig[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedWorkspaces = localStorage.getItem("cf_workspaces");
-        if (storedWorkspaces) {
-          return JSON.parse(storedWorkspaces);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return WORKSPACES;
-  });
+  const [workspaces, setWorkspaces] = useState<WorkspaceConfig[]>(WORKSPACES);
 
-  const [assets, setAssets] = useState<MockContentAsset[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedAssets = localStorage.getItem("cf_assets");
-        if (storedAssets) {
-          return JSON.parse(storedAssets);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return MOCK_CONTENT_ASSETS;
-  });
+  const [assets, setAssets] = useState<MockContentAsset[]>(MOCK_CONTENT_ASSETS);
 
-  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const storedUser = localStorage.getItem("cf_current_user");
-        if (storedUser) {
-          return JSON.parse(storedUser);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return { name: "John Doe", email: "john.doe@contentflow.ai", initials: "JD" };
-  });
+  const [currentUser, setCurrentUser] = useState<UserProfile>({ name: "John Doe", email: "john.doe@contentflow.ai", initials: "JD" });
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // Premium State Extensions
-  const [notifications, setNotifications] = useState<MockNotification[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("cf_notifications");
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return [
-      { id: 1, text: "AI Suggestion: 'Top 5 LinkedIn Hooks' is ready", time: "10m ago", read: false, type: "info", timestamp: Date.now() - 10 * 60 * 1000 },
-      { id: 2, text: "Twitter thread scheduled successfully", time: "2h ago", read: false, type: "success", timestamp: Date.now() - 2 * 60 * 60 * 1000 },
-      { id: 3, text: "Engagement spike detected on LinkedIn post (+24%)", time: "1d ago", read: true, type: "success", timestamp: Date.now() - 24 * 60 * 60 * 1000 },
-    ];
-  });
+  const [notifications, setNotifications] = useState<MockNotification[]>([
+    { id: 1, text: "AI Suggestion: 'Top 5 LinkedIn Hooks' is ready", time: "10m ago", read: false, type: "info", timestamp: Date.now() - 10 * 60 * 1000 },
+    { id: 2, text: "Twitter thread scheduled successfully", time: "2h ago", read: false, type: "success", timestamp: Date.now() - 2 * 60 * 60 * 1000 },
+    { id: 3, text: "Engagement spike detected on LinkedIn post (+24%)", time: "1d ago", read: true, type: "success", timestamp: Date.now() - 24 * 60 * 60 * 1000 },
+  ]);
 
-  const [templates, setTemplates] = useState<SavedTemplate[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("cf_templates");
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return [
-      { id: 1, name: "Contrarian Founder Tech Hook", prompt: "Write about why standard MVPs are dead and why visual premium layouts convert better.", tone: "bold", source: "text" },
-      { id: 2, name: "Product Feature Release Thread", prompt: "Outline our new local state operations and Command Palette feature for the SaaS dashboard.", tone: "professional", source: "notes" },
-      { id: 3, name: "My Personal Bootstrapping Story", prompt: "Tell the story of how we launched ContentFlow AI in public, got our first 10 B2B users, and saved creators 14 hours a week.", tone: "inspiring", source: "text" }
-    ];
-  });
+  const [templates, setTemplates] = useState<SavedTemplate[]>([
+    { id: 1, name: "Contrarian Founder Tech Hook", prompt: "Write about why standard MVPs are dead and why visual premium layouts convert better.", tone: "bold", source: "text" },
+    { id: 2, name: "Product Feature Release Thread", prompt: "Outline our new local state operations and Command Palette feature for the SaaS dashboard.", tone: "professional", source: "notes" },
+    { id: 3, name: "My Personal Bootstrapping Story", prompt: "Tell the story of how we launched ContentFlow AI in public, got our first 10 B2B users, and saved creators 14 hours a week.", tone: "inspiring", source: "text" }
+  ]);
 
-  const [campaigns, setCampaigns] = useState<Campaign[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("cf_campaigns");
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return MOCK_CAMPAIGNS;
-  });
+  const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
 
-  const [onboardingCompleted, setOnboardingCompletedState] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("cf_onboarding_completed");
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return false;
-  });
+  const [onboardingCompleted, setOnboardingCompletedState] = useState<boolean>(false);
 
-  const [tourCompleted, setTourCompletedState] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("cf_tour_completed");
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return false;
-  });
+  const [tourCompleted, setTourCompletedState] = useState<boolean>(false);
 
-  const [kpiIncrements, setKpiIncrements] = useState<Record<string, { assets: number; reach: number; engagement: number; drafts: number }>>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("cf_kpi_increments");
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return {
-      personal: { assets: 0, reach: 0, engagement: 0, drafts: 0 },
-      agency: { assets: 0, reach: 0, engagement: 0, drafts: 0 },
-      startup: { assets: 0, reach: 0, engagement: 0, drafts: 0 },
-    };
+  const [kpiIncrements, setKpiIncrements] = useState<Record<string, { assets: number; reach: number; engagement: number; drafts: number }>>({
+    personal: { assets: 0, reach: 0, engagement: 0, drafts: 0 },
+    agency: { assets: 0, reach: 0, engagement: 0, drafts: 0 },
+    startup: { assets: 0, reach: 0, engagement: 0, drafts: 0 },
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const storedWorkspaceId = localStorage.getItem("cf_active_workspace_id");
+        if (storedWorkspaceId && ["personal", "agency", "startup"].includes(storedWorkspaceId)) {
+          setActiveWorkspaceIdState(storedWorkspaceId as "personal" | "agency" | "startup");
+        }
+
+        const storedWorkspaces = localStorage.getItem("cf_workspaces");
+        if (storedWorkspaces) {
+          setWorkspaces(JSON.parse(storedWorkspaces));
+        }
+
+        const storedAssets = localStorage.getItem("cf_assets");
+        if (storedAssets) {
+          setAssets(JSON.parse(storedAssets));
+        }
+
+        const storedUser = localStorage.getItem("cf_current_user");
+        if (storedUser) {
+          setCurrentUser(JSON.parse(storedUser));
+          setIsLoggedIn(true);
+        }
+
+        const storedNotifs = localStorage.getItem("cf_notifications");
+        if (storedNotifs) {
+          setNotifications(JSON.parse(storedNotifs));
+        }
+
+        const storedTemplates = localStorage.getItem("cf_templates");
+        if (storedTemplates) {
+          setTemplates(JSON.parse(storedTemplates));
+        }
+
+        const storedCampaigns = localStorage.getItem("cf_campaigns");
+        if (storedCampaigns) {
+          setCampaigns(JSON.parse(storedCampaigns));
+        }
+
+        const storedOnboarding = localStorage.getItem("cf_onboarding_completed");
+        if (storedOnboarding) {
+          setOnboardingCompletedState(JSON.parse(storedOnboarding));
+        }
+
+        const storedTour = localStorage.getItem("cf_tour_completed");
+        if (storedTour) {
+          setTourCompletedState(JSON.parse(storedTour));
+        }
+
+        const storedKPIs = localStorage.getItem("cf_kpi_increments");
+        if (storedKPIs) {
+          setKpiIncrements(JSON.parse(storedKPIs));
+        }
+      } catch (e) {
+        console.error("Error loading localStorage data", e);
+      }
+    }
+    
     setTimeout(() => {
       setIsLoaded(true);
     }, 0);
@@ -279,12 +233,13 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isLoaded) return;
+    if (!isLoggedIn) return;
     try {
       localStorage.setItem("cf_current_user", JSON.stringify(currentUser));
     } catch (e) {
       console.error(e);
     }
-  }, [currentUser, isLoaded]);
+  }, [currentUser, isLoaded, isLoggedIn]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -342,7 +297,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         
         // Randomly select a metric to increment slightly
         const rand = Math.random();
-        let updated = { ...prev };
+        const updated = { ...prev };
         
         if (rand < 0.1) {
           // Increment Content Assets by 1
@@ -417,9 +372,11 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       email,
       initials
     });
+    setIsLoggedIn(true);
   };
 
   const logoutUser = () => {
+    setIsLoggedIn(false);
     setCurrentUser({ name: "John Doe", email: "john.doe@contentflow.ai", initials: "JD" });
     setOnboardingCompletedState(false);
     setTourCompletedState(false);
@@ -430,6 +387,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem("cf_tour_completed");
         localStorage.removeItem("cf_assets");
         localStorage.removeItem("cf_kpi_increments");
+        localStorage.removeItem("cf_campaigns");
       } catch (e) {
         console.error(e);
       }
@@ -884,7 +842,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       campaigns,
       addCampaign,
       updateCampaign,
-      deleteCampaign
+      deleteCampaign,
+      isLoaded
     }}>
       {children}
     </WorkspaceContext.Provider>

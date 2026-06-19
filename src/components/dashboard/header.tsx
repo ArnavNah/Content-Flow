@@ -22,7 +22,8 @@ export function Header() {
     logoutUser,
     notifications,
     markNotificationAsRead,
-    clearAllNotifications
+    clearAllNotifications,
+    isLoaded
   } = useWorkspace();
   
   const activeWorkspace = workspaces.find(w => w.id === activeWorkspaceId) || workspaces[0];
@@ -38,14 +39,13 @@ export function Header() {
 
   return (
     <header className="h-16 border-b border-border bg-card/50 backdrop-blur-md sticky top-0 z-35 transition-all duration-300 flex items-center w-full">
-      <div className="w-full px-4 md:px-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      <div className="w-full px-4 md:px-8 flex items-center justify-between">
       {/* Left: Workspace Switcher */}
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger id="header-switcher" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-secondary border border-border/60 text-sm font-medium text-foreground transition-all duration-200 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30">
             <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-            <span className="max-w-[120px] truncate">{activeWorkspace.name}</span>
+            <span className="max-w-[120px] truncate">{isLoaded ? activeWorkspace.name : "Personal Workspace"}</span>
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56 mt-1 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">
@@ -149,15 +149,15 @@ export function Header() {
         {/* User Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-1.5 hover:bg-secondary p-1 rounded-full border border-transparent hover:border-border/60 transition-all duration-200 cursor-pointer focus:outline-none">
-            <Avatar className="h-7.5 w-7.5 border border-border/60">
+            <Avatar className="h-8 w-8 border border-border/60">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{currentUser.initials}</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{isLoaded ? currentUser.initials : ""}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 mt-1 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)]">
             <div className="flex flex-col px-3 py-2.5 border-b border-border/40">
-              <span className="text-xs font-semibold text-foreground leading-none">{currentUser.name}</span>
-              <span className="text-[10px] text-muted-foreground mt-1 truncate">{currentUser.email}</span>
+              <span className="text-xs font-semibold text-foreground leading-none">{isLoaded ? currentUser.name : ""}</span>
+              <span className="text-[10px] text-muted-foreground mt-1 truncate">{isLoaded ? currentUser.email : ""}</span>
             </div>
             <div className="p-1">
               <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 cursor-pointer rounded-lg text-xs">
@@ -183,7 +183,6 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-        </div>
       </div>
     </header>
   );

@@ -20,7 +20,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className={`${geist.className} ${geist.variable} antialiased selection:bg-primary/20 selection:text-primary`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

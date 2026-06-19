@@ -17,7 +17,10 @@ import {
   Sun, 
   User, 
   Shield, 
-  Check
+  Check,
+  Kanban,
+  Lightbulb,
+  Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -107,6 +110,30 @@ export function CommandPalette() {
         category: "Navigation",
         icon: Navigation,
         action: () => { router.push("/dashboard"); setIsOpen(false); }
+      },
+      {
+        id: "nav-pipeline",
+        title: "Go to Content Pipeline",
+        subtitle: "Manage kanban workflow tracking assets",
+        category: "Navigation",
+        icon: Kanban,
+        action: () => { router.push("/dashboard/pipeline"); setIsOpen(false); }
+      },
+      {
+        id: "nav-ideas",
+        title: "Go to AI Ideas & Suggestions",
+        subtitle: "View content ideas and brainstorming cards",
+        category: "Navigation",
+        icon: Lightbulb,
+        action: () => { router.push("/dashboard/ideas"); setIsOpen(false); }
+      },
+      {
+        id: "nav-workspace",
+        title: "Go to Workspace Snapshot",
+        subtitle: "Manage team collaboration details and metrics",
+        category: "Navigation",
+        icon: Users,
+        action: () => { router.push("/dashboard/workspace"); setIsOpen(false); }
       },
       {
         id: "nav-generator",

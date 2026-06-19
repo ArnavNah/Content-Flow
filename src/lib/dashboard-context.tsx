@@ -68,33 +68,47 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       const savedWorkspace = localStorage.getItem("cf_active_workspace") as "personal" | "agency" | "startup";
       if (savedWorkspace) {
-        setActiveWorkspaceId(savedWorkspace);
+        setTimeout(() => {
+          setActiveWorkspaceId(savedWorkspace);
+        }, 0);
       }
 
       const savedAssets = localStorage.getItem("cf_content_assets");
       if (savedAssets) {
-        setAssets(JSON.parse(savedAssets));
+        setTimeout(() => {
+          setAssets(JSON.parse(savedAssets));
+        }, 0);
       } else {
-        setAssets(MOCK_CONTENT_ASSETS);
+        setTimeout(() => {
+          setAssets(MOCK_CONTENT_ASSETS);
+        }, 0);
         localStorage.setItem("cf_content_assets", JSON.stringify(MOCK_CONTENT_ASSETS));
       }
 
       const savedDismissed = localStorage.getItem("cf_dismissed_suggestions");
       if (savedDismissed) {
-        setDismissedSuggestionIds(JSON.parse(savedDismissed));
+        setTimeout(() => {
+          setDismissedSuggestionIds(JSON.parse(savedDismissed));
+        }, 0);
       }
 
       const savedActivities = localStorage.getItem("cf_custom_activities");
       if (savedActivities) {
-        setCustomActivities(JSON.parse(savedActivities).map((a: any) => ({ ...a, timestamp: new Date(a.timestamp) })));
+        setTimeout(() => {
+          setCustomActivities(JSON.parse(savedActivities).map((a: { id: string; text: string; time: string; timestamp: string | number | Date }) => ({ ...a, timestamp: new Date(a.timestamp) })));
+        }, 0);
       }
 
       const savedIncrements = localStorage.getItem("cf_kpi_increments");
       if (savedIncrements) {
-        setKpiIncrements(JSON.parse(savedIncrements));
+        setTimeout(() => {
+          setKpiIncrements(JSON.parse(savedIncrements));
+        }, 0);
       }
 
-      setHydrated(true);
+      setTimeout(() => {
+        setHydrated(true);
+      }, 0);
     }
   }, []);
 
@@ -115,7 +129,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         
         // Randomly select a metric to increment slightly
         const rand = Math.random();
-        let updated = { ...prev };
+        const updated = { ...prev };
         
         if (rand < 0.15) {
           // Content Asset increments
